@@ -1,32 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
-using RewardService.LoginManager;
+using RewardService.Models;
+using System.Threading.Tasks;
+using RewardService.DataAccessManager;
 
-namespace RewardService.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class LoginController : ControllerBase
+namespace RewardService.Controllers
 {
-    private readonly ILogger<LoginController> _logger;
-
-    public LoginController(ILogger<LoginController> logger)
+    [ApiController]
+    [Route("[controller]")]
+    public class LoginController : ControllerBase
     {
-        _logger = logger;
-    }
+        private readonly ILogger<LoginController> _logger;
 
-    [HttpGet("/getplayerinfo/{playerId}")]
-    public string GetPlayerInfo(string playerId)
-    {
-        Player player = new Player()
+        public LoginController(ILogger<LoginController> logger)
         {
-            PlayerId = playerId,
-            LoginDate = DateTime.Now,
-            IsLoggedIn = true
-        };
+            _logger = logger;
+        }
 
-        //SavePlayerInfo(player.PlayerId, player);
+        [HttpGet("/getplayerinfo/{playerId}")]
+        public async Task<PlayersOnline> GetPlayerInfo(string playerId)
+        {
+            PlayersOnline player = new PlayersOnline(playerId);
+           
+            await SaveLoginInfo(player);
 
-        return "Player with ID: " + player.PlayerId + " logged in at " + player.LoginDate;
+            return player;
+        }
     }
 }
