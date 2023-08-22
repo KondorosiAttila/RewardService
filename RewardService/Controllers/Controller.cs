@@ -41,6 +41,20 @@ namespace RewardService.Controllers
             return player;
         }
 
-        
+        [HttpDelete("/logout/{id}")]
+        public async Task<Player> PlayerLogout(string id)
+        {
+            Player player = new Player()
+            {
+                PlayerId = id,
+                LogoutTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture)
+            };
+
+            System.Console.WriteLine($"Player with ID {player.PlayerId} logged out at {player.LogoutTime}");
+
+            await dbCommands.DeletePlayerLoggedInEntry(player);
+
+            return player;
+        }
     }
 }

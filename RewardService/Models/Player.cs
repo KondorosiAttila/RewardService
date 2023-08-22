@@ -10,7 +10,9 @@ namespace RewardService.Models
     {
         public string PlayerId { get; set; }
 
-        public string LoginTime { get; set; }
+        public string? LoginTime { get; set; }
+
+        public string? LogoutTime { get; set; }
 
         public Player()
         { }
