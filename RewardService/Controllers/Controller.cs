@@ -4,9 +4,11 @@ using System;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using RewardService.Models;
 using RewardService.DataAccessManager;
+using RewardService.Timers;
 
 namespace RewardService.Controllers
 {
@@ -32,11 +34,19 @@ namespace RewardService.Controllers
                 PlayerId = id,
                 LoginTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture)
             };
-            
+
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
             System.Console.WriteLine($"Player with ID {player.PlayerId} logged in at {player.LoginTime}");
 
             System.Console.WriteLine($"Sending {player.PlayerId} info to DataAccessManager");
             await dbCommands.SavePlayerLogin(player);
+
+            ScheduledActions trigger = new ScheduledActions(player);
+            
+            await trigger.StartAsync(token);
+            await trigger.StopAsync(token);
 
             return player;
         }
