@@ -25,46 +25,43 @@ namespace RewardService.Controllers
         }
 
         DbMethods dbCommands = new DbMethods();
+        //ScheduledActions trigger = new ScheduledActions(player);
 
         [HttpPost("/login/{id}")]
         public async Task<Player> PlayerLogin(string id)
         {
-            Player player = new Player()
+            Player LoginPlayer = new Player()
             {
                 PlayerId = id,
                 LoginTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture)
             };
 
-            CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
+            Player.PlayersOnline.Add(LoginPlayer);
 
-            System.Console.WriteLine($"Player with ID {player.PlayerId} logged in at {player.LoginTime}");
+            System.Console.WriteLine($"Player with ID {LoginPlayer.PlayerId} logged in at {LoginPlayer.LoginTime}");
 
-            System.Console.WriteLine($"Sending {player.PlayerId} info to DataAccessManager");
-            await dbCommands.SavePlayerLogin(player);
-
-            ScheduledActions trigger = new ScheduledActions(player);
+            System.Console.WriteLine($"Sending {LoginPlayer.PlayerId} info to DataAccessManager");
+            await dbCommands.SavePlayerLogin(LoginPlayer);
             
-            await trigger.StartAsync(token);
-            await trigger.StopAsync(token);
-
-            return player;
+            //await trigger.StartAsync(trigger.token);
+            
+            return LoginPlayer;
         }
 
         [HttpDelete("/logout/{id}")]
         public async Task<Player> PlayerLogout(string id)
         {
-            Player player = new Player()
-            {
-                PlayerId = id,
-                LogoutTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture)
-            };
+            Player LogoutPlayer = Player.PlayersOnline.Find(Player => Player.PlayerId == id);
+            LogoutPlayer.LogoutTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture);
 
-            System.Console.WriteLine($"Player with ID {player.PlayerId} logged out at {player.LogoutTime}");
 
-            await dbCommands.DeletePlayerLoggedInEntry(player);
+            System.Console.WriteLine($"Player with ID {LogoutPlayer.PlayerId} logged out at {LogoutPlayer.LogoutTime}");
 
-            return player;
+            await dbCommands.DeletePlayerLoggedInEntry(LogoutPlayer);
+
+            //await trigger.StopAsync(trigger.token);
+
+            return LogoutPlayer;
         }
     }
 }

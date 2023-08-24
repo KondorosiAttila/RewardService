@@ -3,6 +3,7 @@
 /bin
 /build
 /obj
+/.vs
 
 *_i.c
 *_p.c

@@ -14,6 +14,10 @@ namespace RewardService.Models
 
         public string? LogoutTime { get; set; }
 
+        public int LatestMinutesPlayed { get; set; }
+
+        public static List<Player> PlayersOnline = new List<Player>();
+
         public Player()
         { }
     }
