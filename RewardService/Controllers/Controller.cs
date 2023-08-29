@@ -54,6 +54,7 @@ namespace RewardService.Controllers
             Player LogoutPlayer = Player.PlayersOnline.Find(Player => Player.PlayerId == id);
             LogoutPlayer.LogoutTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture);
 
+            //Another comment
 
             System.Console.WriteLine($"Player with ID {LogoutPlayer.PlayerId} logged out at {LogoutPlayer.LogoutTime}");
 
