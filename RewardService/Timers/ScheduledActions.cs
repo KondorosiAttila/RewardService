@@ -36,18 +36,20 @@ namespace RewardService.Timers
 
         private async void TrackActiveTime(object state)
         {
-            if(minutesPlayed == 10) 
+            if(this.minutesPlayed == 10) 
             {
-                Console.WriteLine($"Player {this.player.PlayerId} played {minutesPlayed} seconds, and is allowed to claim reward");
+                Console.WriteLine($"Player {this.player.PlayerId} played {this.minutesPlayed} seconds, and is allowed to claim reward");
                 Dispose();
-            }            
+            }
+
+            System.Console.WriteLine($"Player {this.player.PlayerId} played {this.minutesPlayed}");
             
-            minutesPlayed = Interlocked.Increment(ref minutesPlayed);
+            minutesPlayed = Interlocked.Increment(ref this.minutesPlayed);
         }
 
         public Task StopAsync(CancellationToken token)
         {
-            this.player.LatestMinutesPlayed = minutesPlayed;
+            this.player.LatestMinutesPlayed = this.minutesPlayed;
             
             Console.WriteLine($"Player activity stopped after {this.player.LatestMinutesPlayed} seconds");
 

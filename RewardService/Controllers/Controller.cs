@@ -25,7 +25,7 @@ namespace RewardService.Controllers
         }
 
         DbMethods dbCommands = new DbMethods();
-        //ScheduledActions trigger = new ScheduledActions(player);
+        ScheduledActions trigger;
 
         [HttpPost("/login/{id}")]
         public async Task<Player> PlayerLogin(string id)
@@ -42,18 +42,25 @@ namespace RewardService.Controllers
 
             System.Console.WriteLine($"Sending {LoginPlayer.PlayerId} info to DataAccessManager");
             await dbCommands.SavePlayerLogin(LoginPlayer);
-            
-            //await trigger.StartAsync(trigger.token);
-            
+
+            trigger = new ScheduledActions(LoginPlayer);
+            await trigger.StartAsync(trigger.token);
+
             return LoginPlayer;
         }
 
         [HttpDelete("/logout/{id}")]
         public async Task<Player> PlayerLogout(string id)
         {
-            Player LogoutPlayer = Player.PlayersOnline.Find(Player => Player.PlayerId == id);
-            LogoutPlayer.LogoutTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture);
+            //Branch example comment
+            //Player LogoutPlayer = Player.PlayersOnline.FirstOrDefault(Player => Player.PlayerId.Equals(id));
+            //LogoutPlayer.LogoutTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture);
 
+            Player LogoutPlayer = new Player()
+            {
+                PlayerId = id,
+                LogoutTime = DateTime.Now.ToString("yyyy-MM-dd H:mm:ss", CultureInfo.InvariantCulture)
+            };
 
             System.Console.WriteLine($"Player with ID {LogoutPlayer.PlayerId} logged out at {LogoutPlayer.LogoutTime}");
 
@@ -61,7 +68,7 @@ namespace RewardService.Controllers
 
             //await trigger.StopAsync(trigger.token);
 
-            return LogoutPlayer;
+            return null;
         }
     }
 }
